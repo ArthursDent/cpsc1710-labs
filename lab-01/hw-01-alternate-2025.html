@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Alternate CPSC 1710 Homework 1 route using the original fast.ai notebook.">
+  <meta name="theme-color" content="#101114">
+  <title>Homework 1 Alternate Route · Original fast.ai Notebook</title>
+  <link rel="stylesheet" href="../assets/labs.css">
+</head>
+<body>
+  <nav class="sitebar no-print" aria-label="Assignment controls">
+    <a href="index.html">← Lab 1</a>
+    <div class="actions"><a class="button" href="hw-01-assignment.html">Guided route</a><button class="button primary" type="button" onclick="window.print()">Print / Save PDF</button></div>
+  </nav>
+
+  <div class="layout">
+    <aside class="toc no-print" aria-label="Assignment contents">
+      <h2>Alternate route</h2>
+      <ol>
+        <li><a href="#begin"><b>01</b><span>Begin</span></a></li>
+        <li><a href="#setup"><b>02</b><span>Setup</span></a></li>
+        <li><a href="#classifier"><b>03</b><span>Pet classifier</span></a></li>
+        <li><a href="#tour"><b>04</b><span>Model tour</span></a></li>
+        <li><a href="#reflect"><b>05</b><span>Reflect</span></a></li>
+        <li><a href="#submit"><b>06</b><span>Submit</span></a></li>
+      </ol>
+    </aside>
+
+    <main class="paper">
+      <header>
+        <p class="kicker" style="--accent:var(--pink)"><span>Lab 01 · Alternate route</span></p>
+        <h1>Explore the Original fast.ai Notebook</h1>
+        <p class="score">100 points · up to 10 bonus points</p>
+        <div class="intro">
+          <p>This is the original-notebook route for Homework 1. Choose it if you want to work closer to the fast.ai Chapter 1 notebook and are comfortable doing more setup and troubleshooting.</p>
+          <p><strong>You only need to complete one Homework 1 route.</strong> The guided route and this alternate route have the same deadline and are both eligible for full credit.</p>
+        </div>
+        <div class="notice"><strong>Before you begin:</strong> save your own notebook copy and preserve errors you cannot resolve. Your process and explanation matter more than making every cell run perfectly.</div>
+      </header>
+
+      <section class="section blue" id="begin">
+        <div class="section-head"><div><p class="section-label"><span>Step 1</span></p><h2>Begin in Colab</h2></div><div class="points"><strong>10</strong> points</div></div>
+        <p>Open <a href="https://colab.research.google.com/github/fastai/fastbook/blob/master/01_intro.ipynb"><strong>the original Chapter 1 notebook</strong></a>.</p>
+        <ol>
+          <li>Choose <strong>File → Save a copy in Drive</strong>.</li>
+          <li>Create a Markdown cell at the very top.</li>
+          <li>Write your full name in that cell.</li>
+        </ol>
+        <p>If notebooks are new to you, use the <a href="https://colab.research.google.com/drive/1fvDMLVIQeLJUYm6Fj1-P6yAvm2hdPiX6">optional Colab quickstart</a> first.</p>
+      </section>
+
+      <section class="section orange" id="setup">
+        <div class="section-head"><div><p class="section-label"><span>Step 2</span></p><h2>Understand the runtime</h2></div><div class="points"><strong>20</strong> points</div></div>
+        <h3>2.1 · CPU and GPU · 10 points</h3>
+        <p>Choose <strong>Runtime → Change runtime type → T4 GPU</strong> if available. Open a second copy of the notebook and leave that one on CPU.</p>
+        <p>In a few words and one screenshot, explain how you can tell which notebook is using which runtime. Find the GPU RAM display if it is available.</p>
+
+        <h3>2.2 · Files and Drive · 10 points</h3>
+        <p>The original notebook may offer to connect Google Drive. This is not required for the homework. Open the Files panel on the left and locate the default files, including <code>sample_data</code>.</p>
+        <p>After navigating into the larger folder tree, where did <code>sample_data</code> go? Explain the directory change in a few words. You may ask an AI assistant to help you understand the interface.</p>
+      </section>
+
+      <section class="section pink" id="classifier">
+        <div class="section-head"><div><p class="section-label"><span>Step 3</span></p><h2>Investigate the pet classifier</h2></div><div class="points"><strong>20</strong> points</div></div>
+        <p>Run the cells above “What Is Machine Learning?” to reach the cat/dog classifier.</p>
+        <h3>3.1 · Repair or explain · 10 points</h3>
+        <p>The book version may use this stand-in instead of a live upload button:</p>
+        <div class="prompt-box"><code>uploader = SimpleNamespace(data=['images/chapter1_cat_example.jpg'])</code></div>
+        <p>Does it work in your copy? If not, identify the error and describe your fix or workaround. It is acceptable to preserve an unresolved error if you explain what you tried.</p>
+
+        <h3>3.2 · Test predictions · 10 points</h3>
+        <p>Test several cat/dog images. Before each run, write down what you expect. Include at least one image for which the predicted probability is between 0.1 and 0.9.</p>
+        <p>Paste each selected image with its prediction score and briefly discuss whether the score matches your expectation.</p>
+      </section>
+
+      <section class="section blue" id="tour">
+        <div class="section-head"><div><p class="section-label"><span>Step 4</span></p><h2>Tour the other models</h2></div><div class="points"><strong>20</strong> points</div></div>
+        <p>Do not train the IMDB example; it can exceed the free Colab runtime. Inspect its code and saved output instead.</p>
+        <p>Continue through the rest of the notebook. Make a short list of the experiments, including the pet classifier. For each, record:</p>
+        <ul>
+          <li>the task,</li>
+          <li>the dataset or data source,</li>
+          <li>the model or learner, and</li>
+          <li>whether you ran it or inspected the saved textbook output.</li>
+        </ul>
+        <p>If the runtime is stable, run the tabular and recommendation examples. For segmentation and IMDB, inspection is enough.</p>
+      </section>
+
+      <section class="section orange" id="reflect">
+        <div class="section-head"><div><p class="section-label"><span>Step 5</span></p><h2>Reflect in your own words</h2></div><div class="points"><strong>20</strong> points</div></div>
+        <p>Read the Chapter 1 text alongside the notebook.</p>
+        <div class="notice"><strong>Human-only writing:</strong> in 2–4 sentences, describe your biggest takeaway, a challenge you encountered, a question you still have, or an application the chapter made you imagine. Do not use AI to draft or polish this response.</div>
+      </section>
+
+      <section class="section pink" id="submit">
+        <div class="section-head"><div><p class="section-label"><span>Step 6</span></p><h2>Submit in Canvas</h2></div><div class="points"><strong>10</strong> points</div></div>
+        <ol>
+          <li>Your completed <code>.ipynb</code> notebook.</li>
+          <li>A PDF of the notebook showing your own execution results.</li>
+        </ol>
+        <p>Use <strong>File → Download</strong> for the notebook and <strong>File → Print → Save to PDF</strong> for the PDF. Inspect the PDF before submitting.</p>
+        <p>Credit any AI tool you used and what it helped with. Do not present saved textbook outputs as results you ran yourself.</p>
+
+        <h3>Optional · up to 10 bonus points</h3>
+        <p>Prepare for Lab 2: install VS Code, create a GitHub account, sign in from VS Code, and practice creating a repository with one commit. No API account or paid service is required.</p>
+      </section>
+
+      <footer>Adapted from the 2025 Homework 1 by Xiuye Chen. Reformatted and updated with Codex (OpenAI).</footer>
+    </main>
+  </div>
+</body>
+</html>

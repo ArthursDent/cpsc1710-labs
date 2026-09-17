@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A beginner-friendly assignment for designing, directing, testing, and explaining a tiny classifier with Codex.">
+  <meta name="theme-color" content="#101114">
+  <title>From One Pixel to Your Classifier</title>
+  <style>
+    :root {
+      --ink: #101114;
+      --paper: #f4f1e8;
+      --white: #fff;
+      --acid: #dbff4a;
+      --orange: #ff6b35;
+      --blue: #4f74ff;
+      --pink: #ed4c91;
+      --muted: #676760;
+      --line: 2px solid var(--ink);
+      --shadow: 7px 7px 0 var(--ink);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 17px;
+      line-height: 1.55;
+    }
+    a { color: inherit; }
+    code, .mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    code {
+      background: #e7e4dc;
+      border: 1px solid #cbc7bc;
+      padding: .08em .3em;
+    }
+    button { font: inherit; }
+
+    .sitebar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding: 12px max(18px, calc((100vw - 1180px) / 2));
+      border-bottom: var(--line);
+      background: rgba(244, 241, 232, .96);
+      backdrop-filter: blur(8px);
+    }
+    .sitebar a {
+      font: 850 .8rem ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-decoration: none;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+    }
+    .actions { display: flex; gap: 9px; }
+    .button {
+      appearance: none;
+      border: var(--line);
+      background: var(--white);
+      color: var(--ink);
+      padding: 8px 12px;
+      cursor: pointer;
+      font: 800 .76rem ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    .button.primary { background: var(--acid); }
+    .button:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); }
+    .button:focus-visible, a:focus-visible { outline: 4px solid var(--blue); outline-offset: 3px; }
+
+    .layout {
+      width: min(1180px, calc(100% - 36px));
+      margin: 34px auto 70px;
+      display: grid;
+      grid-template-columns: 230px minmax(0, 790px);
+      gap: 54px;
+      align-items: start;
+    }
+    .toc {
+      position: sticky;
+      top: 78px;
+      border: var(--line);
+      background: var(--white);
+      box-shadow: 5px 5px 0 var(--ink);
+      padding: 17px;
+    }
+    .toc h2 {
+      margin: 0 0 12px;
+      font: 900 .75rem ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .toc ol { list-style: none; margin: 0; padding: 0; }
+    .toc li + li { border-top: 1px solid #d7d3c9; }
+    .toc a {
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 8px;
+      padding: 8px 2px;
+      font-size: .78rem;
+      line-height: 1.25;
+      text-decoration: none;
+    }
+    .toc b { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .toc a:hover span { text-decoration: underline; text-decoration-thickness: 2px; }
+
+    .paper {
+      min-width: 0;
+      border: var(--line);
+      background: var(--white);
+      box-shadow: var(--shadow);
+      padding: clamp(30px, 6vw, 68px);
+    }
+    .kicker, .stop-label {
+      margin: 0 0 12px;
+      font: 900 .78rem ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .kicker span, .stop-label span {
+      display: inline-block;
+      border: 1px solid var(--ink);
+      background: var(--accent, var(--acid));
+      padding: 4px 7px;
+    }
+    h1, h2, h3 { line-height: 1; letter-spacing: -.045em; }
+    h1 { margin: 0 0 18px; font-size: clamp(2.7rem, 7vw, 5.3rem); }
+    h2 { margin: 0; font-size: clamp(2rem, 5vw, 3.2rem); }
+    h3 { margin: 30px 0 13px; font-size: 1.55rem; }
+    p { margin: 0 0 18px; }
+    ul, ol { margin: 0 0 20px; padding-left: 1.7em; }
+    li { padding-left: .25em; }
+    .score {
+      margin: 0 0 27px;
+      font: 850 .88rem ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .intro { font-size: 1.08rem; }
+    .path {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 28px 0;
+      font: 800 .78rem ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .path span { border: 1px solid var(--ink); padding: 5px 8px; }
+    .path i { align-self: center; color: var(--blue); font-style: normal; }
+
+    .stop { --accent: var(--acid); margin-top: 64px; scroll-margin-top: 88px; }
+    .stop:nth-of-type(4n + 2) { --accent: var(--orange); }
+    .stop:nth-of-type(4n + 3) { --accent: #91a7ff; }
+    .stop:nth-of-type(4n) { --accent: #f58cba; }
+    .stop-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: end;
+      border-bottom: var(--line);
+      padding-bottom: 14px;
+      margin-bottom: 24px;
+    }
+    .points {
+      min-width: 88px;
+      text-align: center;
+      border: var(--line);
+      background: var(--accent);
+      padding: 9px 10px 8px;
+      font: 900 .75rem ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-transform: uppercase;
+    }
+    .points strong { display: block; font-size: 1.45rem; line-height: 1; }
+    .big-idea {
+      margin: 26px 0 0;
+      border-left: 10px solid var(--accent);
+      background: #f6f4ed;
+      padding: 15px 18px;
+    }
+    .big-idea strong {
+      display: block;
+      margin-bottom: 2px;
+      font: 900 .72rem ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+    }
+    .worksheet {
+      counter-reset: prompt;
+      list-style: none;
+      padding: 0;
+    }
+    .worksheet li {
+      counter-increment: prompt;
+      display: grid;
+      grid-template-columns: 24px 1fr;
+      gap: 8px;
+      margin: 10px 0;
+      padding: 0;
+    }
+    .worksheet li::before {
+      content: counter(prompt) ".";
+      font: 800 .88rem ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .blank {
+      display: inline-block;
+      min-width: 52%;
+      border-bottom: 1.5px solid var(--ink);
+      transform: translateY(-2px);
+    }
+    .wide-blank { display: block; height: 30px; border-bottom: 1.5px solid var(--ink); }
+    .file-list {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+      margin: -3px 0 22px;
+    }
+    .file-list code { padding: 5px 8px; }
+    .prompt-box {
+      position: relative;
+      margin: 22px 0;
+      border: var(--line);
+      background: var(--ink);
+      color: var(--white);
+      padding: 22px;
+    }
+    .prompt-box pre {
+      margin: 0;
+      white-space: pre-wrap;
+      font: 500 .84rem/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .copy {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      border: 1px solid var(--white);
+      background: var(--acid);
+      color: var(--ink);
+      padding: 5px 8px;
+      cursor: pointer;
+      font: 800 .68rem ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-transform: uppercase;
+    }
+    .callout {
+      border: var(--line);
+      background: var(--acid);
+      padding: 18px 20px;
+      margin: 24px 0;
+    }
+    .reflection {
+      border: var(--line);
+      box-shadow: 4px 4px 0 var(--ink);
+      padding: 19px;
+      margin: 25px 0;
+    }
+    .reflection p:last-child { margin-bottom: 0; }
+    .checks { list-style: none; padding-left: 0; }
+    .checks li { position: relative; padding-left: 31px; margin: 8px 0; }
+    .checks li::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: .17em;
+      width: 17px;
+      height: 17px;
+      border: 2px solid var(--ink);
+      background: var(--white);
+    }
+    .bonus { --accent: var(--acid); }
+    footer {
+      margin-top: 64px;
+      padding-top: 18px;
+      border-top: var(--line);
+      color: var(--muted);
+      font-size: .78rem;
+    }
+
+    @media (max-width: 880px) {
+      .layout { grid-template-columns: 1fr; gap: 22px; }
+      .toc { position: static; }
+      .toc ol { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+      .paper { padding: clamp(26px, 7vw, 54px); }
+    }
+    @media (max-width: 570px) {
+      body { font-size: 16px; }
+      .sitebar { align-items: flex-start; }
+      .actions .button:not(.primary) { display: none; }
+      .layout { width: min(100% - 22px, 790px); margin-top: 16px; }
+      .toc { display: none; }
+      .paper { padding: 25px 20px; box-shadow: 4px 4px 0 var(--ink); }
+      .stop { margin-top: 48px; }
+      .stop-head { grid-template-columns: 1fr; }
+      .points { width: fit-content; min-width: 0; display: flex; gap: 5px; align-items: baseline; }
+      .points strong { font-size: .75rem; }
+    }
+
+    @media print {
+      @page { size: letter; margin: .62in .68in .64in; }
+      :root { --paper: #fff; }
+      html { scroll-behavior: auto; }
+      body { background: #fff; font-size: 10.5pt; line-height: 1.4; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      .no-print, .sitebar, .toc, .copy { display: none !important; }
+      .layout { display: block; width: auto; margin: 0; }
+      .paper { border: 0; box-shadow: none; padding: 0; }
+      h1 { font-size: 34pt; }
+      h2 { font-size: 22pt; }
+      h3 { font-size: 15pt; margin-top: 20pt; }
+      .intro { font-size: 11pt; }
+      .stop { margin-top: 34pt; scroll-margin-top: 0; }
+      .stop-head, .big-idea, .prompt-box, .callout, .reflection, .file-list, footer { break-inside: avoid; }
+      .stop-head { break-after: avoid-page; margin-bottom: 16pt; }
+      .stop-label { margin-bottom: 7pt; }
+      .points { padding: 6pt 8pt; }
+      .prompt-box { background: #f1f1ed; color: #000; }
+      .worksheet li, .checks li { break-inside: avoid; }
+      a { text-decoration: none; }
+      .screen-only { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="sitebar no-print" aria-label="Assignment controls">
+    <a href="index.html">← Lab 2</a>
+    <div class="actions">
+      <a class="button" href="#stop-1">Start assignment</a>
+      <button class="button primary" type="button" onclick="window.print()">Print / Save PDF</button>
+    </div>
+  </nav>
+
+  <div class="layout">
+    <aside class="toc no-print" aria-label="Assignment contents">
+      <h2>Assignment route</h2>
+      <ol>
+        <li><a href="#stop-1"><b>01</b><span>Explore</span></a></li>
+        <li><a href="#stop-2"><b>02</b><span>Start safely</span></a></li>
+        <li><a href="#stop-3"><b>03</b><span>Choose</span></a></li>
+        <li><a href="#stop-4"><b>04</b><span>Direct Codex</span></a></li>
+        <li><a href="#stop-5"><b>05</b><span>Test</span></a></li>
+        <li><a href="#stop-6"><b>06</b><span>Explain</span></a></li>
+        <li><a href="#bonus"><b>+</b><span>Bonus</span></a></li>
+        <li><a href="#lab-plan"><b>→</b><span>Lab plan</span></a></li>
+      </ol>
+    </aside>
+
+    <main class="paper">
+      <header>
+        <p class="kicker"><span>Homework 2 · Part 2</span></p>
+        <h1>From One Pixel to Your Classifier</h1>
+        <p class="score">80 points · up to 10 bonus points</p>
+        <div class="intro">
+          <p><strong>You do not need to know how to code for this assignment.</strong> You are not expected to type a single line of HTML or JavaScript. Codex will write the code.</p>
+          <p>Your job is to decide what you want to make, describe it clearly, open the result, try it, notice what happens, and ask for changes. These are important skills for working with AI—and for doing experiments in machine learning.</p>
+        </div>
+        <div class="path" aria-label="Assignment path">
+          <span>explore</span><i>→</i><span>choose</span><i>→</i><span>direct</span><i>→</i><span>test</span><i>→</i><span>explain</span>
+        </div>
+        <p>We will begin together during lab. By the end of the session, everyone should have a project folder, a first Git save point, an idea, and an imperfect first webpage. <strong>Imperfect is expected.</strong></p>
+      </header>
+
+      <section class="stop" id="stop-1">
+        <div class="stop-head">
+          <div><p class="stop-label"><span>Stop 1</span></p><h2>Explore One Pixel ML</h2></div>
+          <div class="points"><strong>15</strong> points</div>
+        </div>
+        <p>Open the provided <code>one-pixel.html</code> file in a browser.</p>
+        <p>The lab contains twelve grayscale pixels. The brightness values are already there, but the labels come from you. Your labels tell the classifier what task to learn.</p>
+        <p>Try at least three labeling patterns. You may use the three Guided Stops in the page.</p>
+        <p>For each pattern, answer briefly:</p>
+        <ol>
+          <li>What rule did you use to label the pixels?</li>
+          <li>What boundary did you expect?</li>
+          <li>What happened?</li>
+        </ol>
+        <p>One or two sentences per pattern is enough. Include a screenshot of the pattern you found most interesting.</p>
+        <div class="big-idea"><strong>Big idea</strong>The same data can become different learning problems when we change the labels.</div>
+      </section>
+
+      <section class="stop" id="stop-2">
+        <div class="stop-head">
+          <div><p class="stop-label"><span>Stop 2</span></p><h2>Make a safe starting point</h2></div>
+          <div class="points"><strong>10</strong> points</div>
+        </div>
+        <p><strong>We will do this together in lab.</strong></p>
+        <p>Create a new project folder and open it in VS Code. Put these two files inside:</p>
+        <div class="file-list"><code>README.md</code><code>one-pixel.html</code></div>
+        <p>Initialize a Git repository and make one commit with the original files. You may ask Codex to do each step.</p>
+        <p>A commit is simply a named save point for your project. You do not need to memorize the commands. Check that the files appear in the Source Control view and that the commit was created.</p>
+        <p>A good first commit message is <code>Add starter One Pixel lab</code>.</p>
+        <p>Create a GitHub repository and push your project. It may be private.</p>
+        <p><strong>GitHub repository link:</strong><span class="wide-blank" aria-hidden="true"></span></p>
+      </section>
+
+      <section class="stop" id="stop-3">
+        <div class="stop-head">
+          <div><p class="stop-label"><span>Stop 3</span></p><h2>Choose one tiny classifier</h2></div>
+          <div class="points"><strong>10</strong> points</div>
+        </div>
+        <p>Invent a classification problem that is only a little more complicated than One Pixel ML.</p>
+        <p>Your idea can be playful. For example, you might classify colors, simple symbols, imaginary creatures, arrangements of lights, shapes, or recommendations based on two choices. Avoid medical, legal, financial, or other high-stakes decisions.</p>
+        <p>Complete these five sentences before asking Codex to build:</p>
+        <ol class="worksheet">
+          <li><span>My page will classify <span class="blank"></span></span></li>
+          <li><span>The possible labels are <span class="blank"></span></span></li>
+          <li><span>The classifier will look at <span class="blank"></span></span></li>
+          <li><span>One example it can learn from is <span class="blank"></span></span></li>
+          <li><span>A visitor should understand that <span class="blank"></span></span></li>
+        </ol>
+        <p>Keep the idea small. Two or three understandable inputs are often more interesting than twenty mysterious ones.</p>
+        <div class="big-idea"><strong>Big idea</strong>Before building a model, decide what its inputs, examples, and labels mean.</div>
+      </section>
+
+      <section class="stop" id="stop-4">
+        <div class="stop-head">
+          <div><p class="stop-label"><span>Stop 4</span></p><h2>Direct Codex</h2></div>
+          <div class="points"><strong>25</strong> points</div>
+        </div>
+        <p>Now ask Codex to create your page. Codex may write every line of code.</p>
+        <p>You can begin by adapting this prompt:</p>
+        <div class="prompt-box">
+          <button class="copy screen-only" type="button" data-copy-prompt>Copy prompt</button>
+          <pre id="starter-prompt">I am a beginner and I do not write code yet.
+
+Help me create one self-contained HTML page for a tiny classifier.
+
+My classification idea:
+My inputs:
+My labels:
+A few examples:
+What I want a visitor to try:
+What I want the page to teach:
+
+Please keep it simple and playful. Do not use API keys, paid services, or a build step. Tell me how to open and test it.</pre>
+        </div>
+        <p>Your finished page should:</p>
+        <ul class="checks">
+          <li>Open in a browser</li>
+          <li>Let a visitor change or choose an input</li>
+          <li>Show a prediction or classification</li>
+          <li>Use some examples, labels, scores, distances, or learned weights</li>
+          <li>Reveal at least one reason for its prediction</li>
+        </ul>
+        <p><strong>The last item matters most.</strong> A visitor should see some evidence—not only an answer.</p>
+        <p>You do not need to understand every line of generated code. You should be able to point out, in ordinary language:</p>
+        <ul>
+          <li>What goes into the classifier</li>
+          <li>What comes out</li>
+          <li>What evidence changes the result</li>
+        </ul>
+
+        <h3>Work in short rounds</h3>
+        <p>Do not try to write the perfect prompt. Ask for a small first version, open it, and respond to what you see.</p>
+        <p>Keep a short development log in your README. Record at least three moments when you directed the work. For example:</p>
+        <ul>
+          <li>I asked for a first version with two inputs.</li>
+          <li>The result was hard to understand, so I asked to show the scores.</li>
+          <li>I found a strange prediction and asked Codex to explain it.</li>
+          <li>I asked a classmate to try it and simplified the instructions.</li>
+        </ul>
+        <div class="big-idea"><strong>Big idea</strong>Vibe coding is a conversation with a working artifact. Your observations make the next prompt better.</div>
+      </section>
+
+      <section class="stop" id="stop-5">
+        <div class="stop-head">
+          <div><p class="stop-label"><span>Stop 5</span></p><h2>Test like an experimenter</h2></div>
+          <div class="points"><strong>15</strong> points</div>
+        </div>
+        <p>Try your classifier rather than only looking at it.</p>
+        <p>Test at least three cases:</p>
+        <ol>
+          <li><strong>An easy case:</strong> a result you expect the classifier to get right.</li>
+          <li><strong>A close case:</strong> an input near the boundary between two labels.</li>
+          <li><strong>A strange case:</strong> something unusual that may expose a weakness.</li>
+        </ol>
+        <p>For each case, record the input, the prediction, and one sentence about what you noticed.</p>
+        <p>Show the page to one classmate. Do not explain it first. Ask them:</p>
+        <ul>
+          <li>What do you think you can change?</li>
+          <li>What do you think the classifier is doing?</li>
+          <li>What is confusing?</li>
+        </ul>
+        <p>Make at least one improvement after testing. It can be small: clearer words, a better example, a useful score, a reset button, or a more visible explanation.</p>
+        <p>Ask Codex to make at least two more Git commits at meaningful checkpoints. You do not need to write Git commands yourself, but check that the commits appear.</p>
+        <div class="big-idea"><strong>Big idea</strong>A working page is not necessarily a clear explanation. Testing helps you see the difference.</div>
+      </section>
+
+      <section class="stop" id="stop-6">
+        <div class="stop-head">
+          <div><p class="stop-label"><span>Stop 6</span></p><h2>Tell the story and submit</h2></div>
+          <div class="points"><strong>5</strong> points</div>
+        </div>
+        <p>Ask Codex to help organize your README. It should include:</p>
+        <ul>
+          <li>The name and purpose of your classifier</li>
+          <li>How to open and use the page</li>
+          <li>A plain-language explanation of how it makes a prediction</li>
+          <li>One limitation you discovered</li>
+          <li>Your short development log</li>
+        </ul>
+        <div class="reflection">
+          <p>Then write this final reflection yourself, without AI-assisted writing:</p>
+          <p><strong>In 2–4 sentences, what choice or correction did you make that improved the project? What did you learn about classification or about directing an AI coding agent?</strong></p>
+        </div>
+
+        <h3>Submit in Canvas</h3>
+        <ol>
+          <li>This document with your answers</li>
+          <li>A screenshot of your finished classifier</li>
+          <li>Your GitHub repository link</li>
+          <li>Your complete project as a ZIP file</li>
+        </ol>
+        <p>Your ZIP file should include at least:</p>
+        <div class="file-list"><code>README.md</code><code>one-pixel.html</code><code>your-new-lab.html</code></div>
+        <p><strong>Do not include passwords, API keys, or other private information.</strong></p>
+      </section>
+
+      <section class="stop bonus" id="bonus">
+        <div class="stop-head">
+          <div><p class="stop-label"><span>Optional</span></p><h2>Bonus</h2></div>
+          <div class="points"><strong>10</strong> points</div>
+        </div>
+        <p>Add something that makes the learning experience clearer—not merely more complicated. Possibilities include comparing two classifiers, showing a useful failure case, adding an especially clear visualization, or making the page work particularly well on a phone or with a keyboard.</p>
+      </section>
+
+      <section class="stop" id="lab-plan">
+        <div class="stop-head">
+          <div><p class="stop-label"><span>Tomorrow in lab</span></p><h2>What we will do together</h2></div>
+        </div>
+        <ol>
+          <li>Explore One Pixel ML.</li>
+          <li>Look at a few instructor examples for inspiration.</li>
+          <li>Create the project folder and first Git save point.</li>
+          <li>Write the five-sentence idea.</li>
+          <li>Send the first Codex prompt.</li>
+          <li>Open and test the first version.</li>
+          <li>Make one more save point before leaving.</li>
+        </ol>
+        <div class="callout"><strong>Before you leave:</strong> show your page to a neighbor. Write down one thing they understood immediately and one thing they found confusing.</div>
+      </section>
+
+      <footer>
+        Drafted by Codex (OpenAI), based on the teaching goals and direction of Xiuye Chen.
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    const copyButton = document.querySelector('[data-copy-prompt]');
+    copyButton?.addEventListener('click', async () => {
+      const prompt = document.querySelector('#starter-prompt').textContent;
+      try {
+        await navigator.clipboard.writeText(prompt);
+        copyButton.textContent = 'Copied';
+        window.setTimeout(() => { copyButton.textContent = 'Copy prompt'; }, 1600);
+      } catch {
+        copyButton.textContent = 'Select + copy';
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="CPSC 1710 Homework 1 guided introduction to deep-learning notebooks.">
+  <meta name="theme-color" content="#101114">
+  <title>Homework 1 · Meet a Deep-Learning Notebook</title>
+  <link rel="stylesheet" href="../assets/labs.css">
+</head>
+<body>
+  <nav class="sitebar no-print" aria-label="Assignment controls">
+    <a href="index.html">← Lab 1</a>
+    <div class="actions"><button class="button primary" type="button" onclick="window.print()">Print / Save PDF</button></div>
+  </nav>
+
+  <div class="layout">
+    <aside class="toc no-print" aria-label="Assignment contents">
+      <h2>Homework route</h2>
+      <ol>
+        <li><a href="#start"><b>01</b><span>Start here</span></a></li>
+        <li><a href="#class"><b>02</b><span>During class</span></a></li>
+        <li><a href="#routes"><b>03</b><span>Choose a route</span></a></li>
+        <li><a href="#homework"><b>04</b><span>Finish at home</span></a></li>
+        <li><a href="#checkpoints"><b>05</b><span>Checkpoints</span></a></li>
+        <li><a href="#submit"><b>06</b><span>Submit</span></a></li>
+      </ol>
+    </aside>
+
+    <main class="paper">
+      <header>
+        <p class="kicker" style="--accent:var(--blue)"><span>Lab 01 · Homework 01</span></p>
+        <h1>Meet a Deep-Learning Notebook</h1>
+        <p class="score">100 points · released September 10 · due September 14, 2026</p>
+        <div class="intro">
+          <p>In this assignment you will get comfortable with Google Colab, train a cat/dog classifier, inspect its predictions, and tour the other machine-learning examples in Chapter 1.</p>
+          <p><strong>No prior Python experience is assumed.</strong> Your goal is to notice what goes into a model, what comes out, and what changes when you run an experiment.</p>
+        </div>
+      </header>
+
+      <section class="section blue" id="start">
+        <div class="section-head"><div><p class="section-label"><span>Start here</span></p><h2>Open the course notebook</h2></div></div>
+        <p><a href="https://colab.research.google.com/drive/1vAFx8D6QDmioBpcSnj__vUNkk1XpNDJx"><strong>Open the guided course companion notebook</strong></a>.</p>
+        <ol>
+          <li>Choose <strong>File → Save a copy in Drive</strong>.</li>
+          <li>Put your name at the top of your copy.</li>
+          <li>Write all answers in the notebook. This handout is a guide, not a separate response form.</li>
+        </ol>
+        <p>Read alongside the <a href="https://colab.research.google.com/github/fastai/fastbook/blob/master/01_intro.ipynb">original fast.ai Chapter 1 notebook</a>.</p>
+        <div class="route" style="--accent:var(--blue)">
+          <h3>New to notebooks?</h3>
+          <p>Begin with the guided notebook. An <a href="https://colab.research.google.com/drive/1fvDMLVIQeLJUYm6Fj1-P6yAvm2hdPiX6">optional 15-minute Colab quickstart</a> is available if you want extra practice.</p>
+        </div>
+      </section>
+
+      <section class="section orange" id="class">
+        <div class="section-head"><div><p class="section-label"><span>During class</span></p><h2>Our 60-minute plan</h2></div></div>
+        <ul class="timeline">
+          <li><strong>0–10 min</strong><span>Save a copy, select a GPU if available, run and edit a cell, and complete Checkpoint 1.</span></li>
+          <li><strong>10–25 min</strong><span>Train the pet classifier. Find its inputs, labels, model, and training call. Begin Checkpoint 2.</span></li>
+          <li><strong>25–30 min</strong><span>Take a break while training finishes.</span></li>
+          <li><strong>30–45 min</strong><span>Predict first, then test the supplied images. Complete Checkpoint 3.</span></li>
+          <li><strong>45–50 min</strong><span>Break or catch up.</span></li>
+          <li><strong>50–60 min</strong><span>Discuss a result, write your own reflection, and review the homework.</span></li>
+        </ul>
+        <p>The class goal is to reach the first classifier investigation, not to finish the chapter. If a download or runtime holds you up, ask for help and keep a note of the issue.</p>
+      </section>
+
+      <section class="section pink" id="routes">
+        <div class="section-head"><div><p class="section-label"><span>Choose your route</span></p><h2>Two supported ways through</h2></div></div>
+        <div class="route" style="--accent:var(--acid)">
+          <h3>Core route · recommended</h3>
+          <p>Use the course companion notebook. It has simplified setup, supplied validation images, and expensive examples switched off by default. This is a good choice if Colab or Python is new to you.</p>
+        </div>
+        <div class="route" style="--accent:var(--pink)">
+          <h3>Challenge route</h3>
+          <p>Use the original fast.ai Chapter 1 notebook. This is fully supported if you want to work closer to the textbook and troubleshoot its original workflow. Follow the <a href="hw-01-alternate-2025.html">alternate-route guide</a>. The learning goals and grading are the same.</p>
+        </div>
+        <p><strong>Full credit is available through either route.</strong> Clearly label results you ran yourself and textbook outputs you only inspected.</p>
+      </section>
+
+      <section class="section blue" id="homework">
+        <div class="section-head"><div><p class="section-label"><span>Finish for homework</span></p><h2>Read, run, and compare</h2></div></div>
+        <p>Read Chapter 1, including “What Is Machine Learning?”, the examples beyond image classification, and “Validation Sets and Test Sets.”</p>
+        <ul>
+          <li>Run the required pet, tabular, and movie-recommendation examples in your chosen notebook.</li>
+          <li>For image segmentation and IMDB sentiment classification, inspect the code and saved outputs. Training these two examples is optional.</li>
+          <li>Complete the five-example comparison table. Distinguish models you ran from results you inspected.</li>
+          <li>You do not need to submit answers to the chapter’s final questionnaire.</li>
+        </ul>
+        <h3>A simpler setup</h3>
+        <ul>
+          <li>Select <strong>Runtime → Change runtime type → T4 GPU</strong> if available. No paid upgrade is required.</li>
+          <li>The Core route does not mount Google Drive. Saving a notebook copy in Drive is a separate action.</li>
+          <li>The required prediction cells use supplied images. Uploading an image is optional.</li>
+          <li>Run cells in order. After a restart, rerun from the top.</li>
+          <li>The Core route uses a smaller training subset and model, so your error rate will differ from the textbook’s.</li>
+        </ul>
+      </section>
+
+      <section class="section orange" id="checkpoints">
+        <div class="section-head"><div><p class="section-label"><span>What to complete</span></p><h2>Six checkpoints</h2></div><div class="points"><strong>100</strong> points</div></div>
+        <div class="checkpoints">
+          <div class="checkpoint"><strong>Checkpoint 1 · Getting oriented · 15 points</strong>Name, saved copy, runtime, a changed calculation, and an explanation of how rerunning works.</div>
+          <div class="checkpoint"><strong>Checkpoint 2 · What did we train? · 20 points</strong>Inputs and labels, your validation error rate and its meaning, and the difference between training and prediction.</div>
+          <div class="checkpoint"><strong>Checkpoint 3 · Inspect predictions · 25 points</strong>Three image records: your prediction before running, the model output, and a brief interpretation. An uncertain or incorrect result is interesting; no particular score is required.</div>
+          <div class="checkpoint"><strong>Checkpoint 4 · Human-only reflection · 15 points</strong>Write 2–4 sentences about your learning, challenges, or next questions. Do not use AI to draft or polish this response.</div>
+          <div class="checkpoint"><strong>Checkpoint 5 · Compare the examples · 15 points</strong>For five examples, identify the dataset, input, output, model, and what you ran or inspected. Explain why evaluation data is held out.</div>
+          <div class="checkpoint"><strong>Checkpoint 6 · Submission · 10 points</strong>Complete answers, visible execution outputs, AI credit, and both required submission files.</div>
+        </div>
+      </section>
+
+      <section class="section pink" id="submit">
+        <div class="section-head"><div><p class="section-label"><span>Submit in Canvas</span></p><h2>Two files</h2></div></div>
+        <ol>
+          <li>Your completed <code>.ipynb</code> notebook: choose <strong>File → Download</strong>.</li>
+          <li>A PDF of that notebook with your own execution results: choose <strong>File → Print → Save to PDF</strong>.</li>
+        </ol>
+        <p>Inspect the PDF before submitting. Your answers and relevant outputs should be visible and readable. No separate completed copy of this handout is required.</p>
+        <p>If a technical issue remains unresolved, keep the error and briefly describe what you tried. Do not present the textbook’s saved outputs as your own.</p>
+
+        <h3>AI and collaboration</h3>
+        <p>You may use AI to understand code or debug. Credit the tool and what it helped with in the notebook. If you did not use AI, write “None.”</p>
+        <p>You may discuss ideas and help classmates with setup, but submit your own executed notebook and explanations. Write the human-only reflection entirely yourself.</p>
+
+        <h3>Optional preparation for Lab 2</h3>
+        <ul>
+          <li>Install VS Code.</li>
+          <li>Create a GitHub account and explore GitHub Education with your Yale email.</li>
+        </ul>
+        <p>This preparation is not part of the Homework 1 grade.</p>
+      </section>
+
+      <footer>Assignment by Xiuye Chen. Reformatted and edited with Codex (OpenAI).</footer>
+    </main>
+  </div>
+</body>
+</html>

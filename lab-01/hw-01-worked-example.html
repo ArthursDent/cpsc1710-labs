@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="A fictional worked example showing one possible level of response for CPSC 1710 Homework 1.">
+  <meta name="theme-color" content="#101114">
+  <title>Homework 1 · One Possible Worked Example</title>
+  <link rel="stylesheet" href="../assets/labs.css">
+</head>
+<body>
+  <nav class="sitebar no-print" aria-label="Example controls">
+    <a href="index.html">← Lab 1</a>
+    <div class="actions"><a class="button" href="hw-01-assignment.html">Assignment</a><button class="button primary" type="button" onclick="window.print()">Print / Save PDF</button></div>
+  </nav>
+
+  <div class="layout">
+    <aside class="toc no-print" aria-label="Example contents">
+      <h2>Worked example</h2>
+      <ol>
+        <li><a href="#orientation"><b>01</b><span>Orientation</span></a></li>
+        <li><a href="#training"><b>02</b><span>Training</span></a></li>
+        <li><a href="#predictions"><b>03</b><span>Predictions</span></a></li>
+        <li><a href="#reflection"><b>04</b><span>Reflection</span></a></li>
+        <li><a href="#comparison"><b>05</b><span>Comparison</span></a></li>
+      </ol>
+    </aside>
+
+    <main class="paper">
+      <header>
+        <p class="kicker" style="--accent:var(--pink)"><span>Homework 01 · Reference</span></p>
+        <h1>One Possible Worked Example</h1>
+        <p class="score">Fictional Core-route submission · not an answer key</p>
+        <div class="notice"><strong>Read this for the level of detail, not for answers to copy.</strong> The student, observations, screenshots, and numerical results below are invented. Your notebook will produce different evidence, and many strong responses will look different from this one.</div>
+        <p>This example models a useful pattern: record what you did, show the evidence you actually observed, and explain it in ordinary language.</p>
+      </header>
+
+      <section class="section blue" id="orientation">
+        <div class="section-head"><div><p class="section-label"><span>Checkpoint 1</span></p><h2>Getting oriented</h2></div></div>
+        <div class="sample-answer" style="--accent:var(--blue)">
+          <span class="answer-label">Example response</span>
+          <p>I saved a copy named <code>HW1_Ada_Lovelace.ipynb</code> and added my name at the top. The runtime menu showed a T4 GPU. I changed the practice calculation from <code>2 + 2</code> to <code>7 * 6</code> and reran the cell, which replaced the old output with <code>42</code>.</p>
+          <p>Changing a cell does not automatically update later cells. I need to rerun the changed cell and any cells that depend on its result. After restarting the runtime, I need to run the notebook from the top because the saved variables are gone.</p>
+        </div>
+        <p><strong>Why this works:</strong> it names the action, the visible result, and the general rule the student inferred.</p>
+      </section>
+
+      <section class="section orange" id="training">
+        <div class="section-head"><div><p class="section-label"><span>Checkpoint 2</span></p><h2>What did we train?</h2></div></div>
+        <div class="sample-answer" style="--accent:var(--orange)">
+          <span class="answer-label">Example response</span>
+          <p>The inputs were pet photographs. The labels were “cat” and “not cat,” derived from the file names. The model learned from a training portion of the images, while a separate validation portion was used to measure how well it handled examples it did not train on.</p>
+          <p>My fictional validation error rate was <strong>0.024</strong>, or about 2.4%. That means roughly 2 or 3 of every 100 held-out images were classified incorrectly in this run. It does not guarantee the same performance on every image found online.</p>
+          <p><strong>Training</strong> changes the model using labeled examples. <strong>Prediction</strong> uses the trained model to produce an output for a new input without changing the model.</p>
+        </div>
+        <p><strong>Why this works:</strong> it translates a metric into plain language and does not overclaim what the number proves.</p>
+      </section>
+
+      <section class="section pink" id="predictions">
+        <div class="section-head"><div><p class="section-label"><span>Checkpoint 3</span></p><h2>Inspect predictions</h2></div></div>
+        <p>In a real submission, each record would include the actual image or notebook output.</p>
+        <div class="checkpoints">
+          <div class="checkpoint">
+            <strong>Image A · clear cat portrait</strong>
+            <p><b>Before running:</b> cat, with high confidence. <b>Fictional output:</b> cat, 0.99.</p>
+            <p>The result matched my prediction. The face, ears, and whiskers were large and unobstructed, so the image resembled a straightforward training example.</p>
+          </div>
+          <div class="checkpoint">
+            <strong>Image B · small dog under a blanket</strong>
+            <p><b>Before running:</b> dog, but uncertain. <b>Fictional output:</b> cat, 0.63.</p>
+            <p>The model disagreed with me and was less confident. Most of the animal was hidden, and the visible pointed ears may have resembled features associated with cats. This is a useful failure because it suggests that context and occlusion matter.</p>
+          </div>
+          <div class="checkpoint">
+            <strong>Image C · fox photographed outdoors</strong>
+            <p><b>Before running:</b> neither label is appropriate. <b>Fictional output:</b> not cat, 0.91.</p>
+            <p>The binary classifier still had to choose one of its two labels. “Not cat” is technically compatible with a fox, but the output does not mean the model recognized a fox. The test exposes how the available labels limit what a prediction can mean.</p>
+          </div>
+        </div>
+        <p><strong>Why these work:</strong> each record separates the student’s prediction, the model’s evidence, and the interpretation.</p>
+      </section>
+
+      <section class="section blue" id="reflection">
+        <div class="section-head"><div><p class="section-label"><span>Checkpoint 4</span></p><h2>Human-only reflection</h2></div></div>
+        <div class="notice"><strong>No sample reflection is provided.</strong> This checkpoint is specifically reserved for your own 2–4 sentences. A model answer would work against the purpose of the question.</div>
+        <p>A useful reflection might begin from one concrete moment: a prediction that surprised you, a setup problem you resolved, or a question the comparison raised. Write the rest in your own words without AI drafting or polishing.</p>
+      </section>
+
+      <section class="section orange" id="comparison">
+        <div class="section-head"><div><p class="section-label"><span>Checkpoint 5</span></p><h2>Compare the examples</h2></div></div>
+        <div class="checkpoints">
+          <div class="checkpoint"><strong>Pet classification · ran</strong>Data: labeled pet photographs. Input: one image. Output: cat or not-cat probability. Model: a pretrained convolutional image classifier adapted to this task.</div>
+          <div class="checkpoint"><strong>Image segmentation · inspected</strong>Data: street-scene images with a category for each pixel. Input: one image. Output: a labeled region map. Model: a U-Net-style vision model.</div>
+          <div class="checkpoint"><strong>Movie-review sentiment · inspected</strong>Data: IMDB review text with positive or negative labels. Input: a review. Output: sentiment prediction. Model: a pretrained language model adapted for classification.</div>
+          <div class="checkpoint"><strong>Adult-income tabular model · ran</strong>Data: rows of demographic and employment fields. Input: one row of mixed categories and numbers. Output: an income category. Model: a tabular neural network.</div>
+          <div class="checkpoint"><strong>Movie recommendation · ran</strong>Data: users’ movie ratings. Input: a user and movie pair. Output: a predicted rating. Model: collaborative filtering using learned user and movie factors.</div>
+        </div>
+        <div class="sample-answer" style="--accent:var(--orange)">
+          <span class="answer-label">Example explanation of held-out data</span>
+          <p>We hold out evaluation data because performance on the same examples used for training can be misleading. A validation set gives the model examples it did not learn from, so it is a better test of whether the learned pattern generalizes.</p>
+        </div>
+
+        <h3>Example AI credit</h3>
+        <div class="sample-answer" style="--accent:var(--orange)"><p>I used Codex to explain the difference between validation error and training loss and to help interpret a file-path error. I wrote the notebook observations and reflection myself.</p></div>
+      </section>
+
+      <footer>Fictional example drafted by Codex (OpenAI), based on the assignment and teaching direction of Xiuye Chen.</footer>
+    </main>
+  </div>
+</body>
+</html>
