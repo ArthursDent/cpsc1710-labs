@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RGB Shade Club · A tiny three-label classifier</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f7f3e9;color:#242533;font:17px/1.55 system-ui,sans-serif}main{max-width:1000px;margin:auto;padding:36px 22px}h1{font-size:clamp(40px,8vw,72px);letter-spacing:-3px;line-height:1.05;margin:15px 0}h2{font-size:24px;margin:0 0 12px}h3{margin:8px 0}.eyebrow{font-size:13px;font-weight:800;letter-spacing:2px;text-transform:uppercase}.intro{max-width:650px}.layout{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:28px}section{background:#fff;border:2px solid #242533;border-radius:22px;padding:24px;box-shadow:4px 5px 0 #242533}.wide{grid-column:1/-1}.examples{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.group{text-align:center;background:#f5f5f8;border-radius:15px;padding:10px 4px}.swatch{display:inline-block;width:30px;height:30px;border:1px solid #555;border-radius:50%;vertical-align:middle}.sample{display:flex;gap:6px;align-items:center;justify-content:center;font-size:12px;margin:10px 0}.sample .swatch{flex-shrink:0;width:23px;height:23px}button{font:700 15px system-ui;cursor:pointer;background:#eeeaff;color:#242533;border:2px solid #242533;border-radius:12px;padding:12px 16px}button:hover{box-shadow:2px 3px 0 #242533}button:focus-visible,input:focus-visible,a:focus-visible{outline:3px solid #6547cc;outline-offset:4px}.primary{background:#d9f58a;margin-top:20px}small,.muted{color:#525362;font-size:14px}.controls{display:flex;align-items:center;gap:18px;margin:20px 0}.circle{width:100px;height:100px;border:2px solid #242533;border-radius:50%;background:#ff0000;flex-shrink:0}input[type=color]{display:block;width:76px;height:43px;padding:3px;background:white;border:1px solid #555;border-radius:8px;cursor:pointer}.presets{display:flex;flex-wrap:wrap;gap:8px}.presets button{padding:8px 10px;font-size:13px;display:flex;align-items:center;gap:6px}.presets .swatch{width:18px;height:18px}.result{background:#f5f2ff;border-radius:15px;padding:18px;margin-top:22px}.prediction{font-size:28px;font-weight:800;margin:0 0 8px}.score{margin:12px 0}.score-label{display:flex;justify-content:space-between}.track{height:14px;background:#dddde5;border-radius:9px;overflow:hidden}.fill{height:100%;width:0;background:#7056c7}.lesson{display:grid;grid-template-columns:1fr 1fr;gap:25px}.note{border-left:4px solid #7056c7;padding-left:14px}footer{margin:28px 0;font-size:13px}a{color:#5235a0}#status{min-height:44px}code{font-size:14px}summary{cursor:pointer;font-weight:700}@media(max-width:720px){.layout,.lesson{grid-template-columns:1fr}.wide{grid-column:auto}main{padding:24px 16px}section{padding:20px}.sample{flex-direction:column}h1{letter-spacing:-2px}}
+.sliders{margin:18px 0}.sliders label{display:block;font-weight:700}.sliders output{float:right;font-variant-numeric:tabular-nums}.sliders input{width:100%;margin:8px 0 15px;accent-color:#7056c7}
+</style>
+</head>
+<body><main>
+<p class="eyebrow">Tiny model / big color energy</p>
+<h1>Welcome to RGB Shade Club.</h1>
+<p class="intro">Three labels. A rainbow of possibilities. Teach a tiny model <b>Red</b>, <b>Green</b>, and <b>Blue</b>, then see what happens when an unexpected color joins the party.</p>
+<div class="layout">
+<section><h2>1. Meet the examples</h2><p>Each circle has a color input and a label. These nine examples are the model’s training set.</p><div class="examples" id="examples"></div><button class="primary" id="train" type="button">Train the model</button> <button id="reset" type="button">Reset</button><p id="status" role="status">Ready to learn! Press Train the model.</p><small>Colors come from <a href="https://www.w3.org/TR/css-color-3/#svg-color">W3C’s online named-color table</a>. We grouped the shades into three teaching labels; this is a tiny demonstration dataset.</small></section>
+<section><h2>2. Give it a circle</h2><p>Try light and dark shades, then mix a surprise. Each slider controls one RGB input from 0 to 255.</p><div class="controls"><div class="circle" id="circle" role="img" aria-label="Input circle: #ff0000"></div><div><label for="picker"><b>Pick any color</b></label><input type="color" id="picker" value="#ff0000"><code id="hex">#FF0000</code></div></div><div class="sliders">
+<label for="red">Red input <output id="redValue" for="red">255</output></label><input id="red" type="range" min="0" max="255" value="255">
+<label for="green">Green input <output id="greenValue" for="green">0</output></label><input id="green" type="range" min="0" max="255" value="0">
+<label for="blue">Blue input <output id="blueValue" for="blue">0</output></label><input id="blue" type="range" min="0" max="255" value="0">
+</div><p class="muted">Try keeping one channel high and raising the other two together to make a paler shade. Lower the strongest channel to make it darker.</p><div class="presets" id="presets"></div><div class="result" aria-live="polite" aria-atomic="true"><p class="prediction" id="prediction">Model is waiting…</p><p id="explanation">Train first to unlock the three outputs.</p><div id="scores"></div><small>Match scores total 100% across Red, Green, and Blue only, even when the result is Unknown. They show relative matches, not whether any label is a good fit.</small></div></section>
+<section class="wide"><h2>3. Three labels, plus permission to pass</h2><div class="lesson"><div><h3>What does “training” do?</h3><p>The model reads each circle’s red, green, and blue amounts (RGB). Training calculates an <b>average RGB color for each label</b>. A new circle is compared with all three averages; the closest average wins, unless all three are too far away. Then the page says <b>Unknown / no good match</b>.</p><p id="learned" class="note">The three average colors will appear here after training.</p></div><div><h3>Beyond “Dark” vs. “Light”</h3><p>Dark vs. Light has two possible labels: a <b>binary classifier</b>. This model has three: a <b>multiclass classifier</b>. The RGB input has three numbers, and here we also chose three output labels. That is a coincidence: the same RGB inputs could be used for two labels or many more. A pale red and a dark red can both have the label Red.</p><p class="note"><b>Try Black or White.</b> These colors are too far from all three learned averages, so the page says Unknown / no good match. Unknown is a distance rule, not a fourth trained label. Some unfamiliar colors, such as gray or purple, may still be close enough to get a label. This rule does not catch every bad guess!</p></div></div><details><summary>A peek inside the score</summary><p>This is a nearest-centroid classifier. Training learns three average RGB vectors. For prediction, RGB values are divided by 255, and we calculate squared distance to each average. Each match strength is <code>exp(−distance / 0.15)</code>; dividing by the sum gives the three scores. The value 0.15 controls how sharp the scores look and is fixed for this demo.</p><p>The Unknown rule uses ordinary RGB distance after dividing each channel by 255. If the nearest average is more than <b>0.70</b> away, the model passes. This fixed teaching cutoff keeps all nine training examples and rejects black and white. It is not a validated accuracy guarantee.</p><p>We have not measured accuracy on a separate test set. Trying the training colors again checks that the demo works; it does not prove that the model understands every shade.</p></details></section>
+</div><footer>One page, all local. No account, API key, download, or internet connection needed to run. Refreshing starts over.</footer>
+<noscript>This classifier needs JavaScript enabled in your browser.</noscript>
+</main>
+<script>
+'use strict';
+const groups = [
+  {label:'Red', colors:[['Dark red','#8b0000'],['Red','#ff0000'],['Light coral','#f08080']]},
+  {label:'Green', colors:[['Dark green','#006400'],['Lime','#00ff00'],['Light green','#90ee90']]},
+  {label:'Blue', colors:[['Dark blue','#00008b'],['Blue','#0000ff'],['Light sky blue','#87cefa']]}
+];
+const presets = [['Red','#ff0000'],['Green','#00ff00'],['Blue','#0000ff'],['Soft red','#ee8888'],['Soft green','#88ee88'],['Soft blue','#8888ee'],['Yellow','#ffff00'],['Cyan','#00ffff'],['Purple','#800080'],['Gray','#808080'],['Black','#000000'],['White','#ffffff']];
+const el = id => document.getElementById(id);
+const rgb = hex => [1,3,5].map(i => parseInt(hex.slice(i,i+2),16)/255);
+// Fixed demonstration cutoff in normalized RGB distance; not a learned fourth class.
+const MAX_MATCH_DISTANCE = 0.70;
+const colorDistances = hex => {
+  const input = rgb(hex);
+  return centers.map(center => Math.sqrt(center.reduce((sum,v,i) => sum+(v-input[i])**2,0)));
+};
+let centers = null;
+el('examples').innerHTML = groups.map(g => `<div class="group"><h3>${g.label}</h3>${g.colors.map(([name,color]) => `<div class="sample"><span class="swatch" style="background:${color}" aria-hidden="true"></span><span>${name}</span></div>`).join('')}</div>`).join('');
+el('presets').innerHTML = presets.map(([name,color]) => `<button type="button" data-color="${color}"><span class="swatch" style="background:${color}" aria-hidden="true"></span>${name}</button>`).join('');
+el('scores').innerHTML = groups.map((g,i) => `<div class="score"><div class="score-label"><span>${g.label}</span><span id="value${i}">—</span></div><div class="track"><div class="fill" id="bar${i}"></div></div></div>`).join('');
+function predict(hex) {
+  const input = rgb(hex);
+  const strengths = centers.map(center => Math.exp(-center.reduce((sum,v,i) => sum+(v-input[i])**2,0)/0.15));
+  const total = strengths.reduce((a,b) => a+b,0);
+  return strengths.map(v => v/total);
+}
+function update() {
+  const hex = el('picker').value;
+  ['red','green','blue'].forEach((id,i)=>{const value=parseInt(hex.slice(1+2*i,3+2*i),16);el(id).value=value;el(id+'Value').textContent=value;});
+  el('circle').style.background = hex;
+  el('circle').setAttribute('aria-label', 'Input circle: '+hex);
+  el('hex').textContent = hex.toUpperCase();
+  if (!centers) return;
+  const scores = predict(hex);
+  const best = Math.max(...scores);
+  const winners = scores.map((v,i) => Math.abs(v-best)<1e-10 ? i : -1).filter(i => i>=0);
+  el('prediction').textContent = winners.length>1 ? 'Tie: '+winners.map(i=>groups[i].label).join(' / ') : 'My guess: '+groups[winners[0]].label;
+  el('explanation').textContent = winners.length>1 ? 'These learned averages are equally close to your circle.' : 'The '+groups[winners[0]].label+' average is closest to your circle. These are the only three labels I know.';
+  const nearestDistance = Math.min(...colorDistances(hex));
+  if (nearestDistance > MAX_MATCH_DISTANCE) {
+    el('prediction').textContent = 'Unknown / no good match';
+    el('explanation').textContent = 'This circle is too far from all three learned colors. The closest average is '+nearestDistance.toFixed(2)+' away; the limit is '+MAX_MATCH_DISTANCE.toFixed(2)+'. The scores below only compare the three known labels.';
+  }
+  // Allocate tenths of a percent so the displayed scores sum to exactly 100%.
+  const units = scores.map(v => Math.floor(v*1000));
+  const order = scores.map((v,i) => ({i, fraction:v*1000-units[i]})).sort((a,b)=>b.fraction-a.fraction);
+  const remaining = 1000-units.reduce((a,b)=>a+b,0);
+  for(let i=0;i<remaining;i++) units[order[i].i]++;
+  scores.forEach((score,i) => {el('value'+i).textContent=(units[i]/10).toFixed(1)+'%';el('bar'+i).style.width=(score*100)+'%';});
+}
+el('train').addEventListener('click', () => {
+  centers = groups.map(g => [0,1,2].map(i => g.colors.reduce((sum,c) => sum+rgb(c[1])[i],0)/g.colors.length));
+  el('status').textContent = 'Trained on 9 circles! Three learned averages are ready. Try a color →';
+  el('train').textContent = 'Train again';
+  el('learned').innerHTML = centers.map((c,i) => `<span class="swatch" style="background:rgb(${c.map(v=>Math.round(v*255)).join(',')})" aria-hidden="true"></span> ${groups[i].label}`).join(' &nbsp; ');
+  update();
+});
+el('picker').addEventListener('input', update);
+['red','green','blue'].forEach(id=>el(id).addEventListener('input',()=>{
+  el('picker').value='#'+['red','green','blue'].map(channel=>Number(el(channel).value).toString(16).padStart(2,'0')).join('');update();
+}));
+el('presets').addEventListener('click', event => {const button=event.target.closest('button');if(button){el('picker').value=button.dataset.color;update();}});
+el('reset').addEventListener('click', () => {
+  centers=null;el('picker').value='#ff0000';el('train').textContent='Train the model';
+  el('status').textContent='Ready to learn! Press Train the model.';
+  el('prediction').textContent='Model is waiting…';el('explanation').textContent='Train first to unlock the three outputs.';
+  el('learned').textContent='The three average colors will appear here after training.';
+  groups.forEach((g,i)=>{el('value'+i).textContent='—';el('bar'+i).style.width='0%';});update();
+});
+</script>
+</body>
+</html>
